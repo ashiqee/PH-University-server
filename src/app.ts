@@ -14,12 +14,12 @@ app.use(cors());
 app.use('/api/v1/', router);
 
 
-const getAController = (req: Request, res: Response) => {
+const test = (req: Request, res: Response) => {
   const a = 10;
   res.send(a);
 };
 
-app.get('/', getAController);
+app.get('/', test);
 
 app.use(globalErrorHandler);
 app.use(notFound)
