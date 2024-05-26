@@ -1,15 +1,29 @@
 import express, { NextFunction, Request, Response } from "express"
 import { UserControllers } from './user.controller';
+import { AnyZodObject } from "zod";
+import { studentValidations } from "../student/student.validation";
 
 const router = express.Router();
 
-const shenabahini = (req:Request,res:Response,next:NextFunction)=>{
-    console.log(req.body);
+const validateRequest =(schema: AnyZodObject)=>{
+    return async (req:Request,res:Response,next:NextFunction)=>{
+       
+  try{
+      //validation 
+      await schema.parseAsync({
+        
+        body:req.body
     
-    next()
-}
+});
 
-router.post('/create-user',shenabahini, UserControllers.createStudent)
+next()
+
+  }catch(err){
+    next(err)
+  }
+}}
+
+router.post('/create-user',validateRequest(studentValidations.StudentValidationSchema), UserControllers.createStudent)
 
 
 
