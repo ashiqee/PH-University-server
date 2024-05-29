@@ -1,6 +1,6 @@
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse"
-import { AcademicSemester } from "./academicSemester.model"
+
 import { AcademicSemesterServices } from './academicSemester.service';
 import  httpStatus  from 'http-status';
 

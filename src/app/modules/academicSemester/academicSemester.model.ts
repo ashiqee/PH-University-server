@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { string } from "zod";
+
 import { AcademicSemesterCode, AcademicSemesterName, Months } from "./academicSemester.constant";
 import { TAcademicSemester } from "./academicSemester.interface";
 
