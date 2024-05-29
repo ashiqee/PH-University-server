@@ -13,14 +13,14 @@ const router = express.Router();
      AcademicSemesterControllers.createAcademicSemester)
 
      //get all
-     router.get('/getAll-academic-semester', AcademicSemesterControllers.getAllAcademicSemester)
+     router.get('/', AcademicSemesterControllers.getAllAcademicSemester)
 
 // get signle academic semester 
-router.get('/getA-acemedic-semester/:semesterId', AcademicSemesterControllers.getSingleAcademicSemester)
+router.get('/:semesterId', AcademicSemesterControllers.getSingleAcademicSemester)
 
 //update academic semester data
-router.patch('/update-academic-semester/:semesterId',
-validateRequest(AcademicSemesterValidation.createAcademicSemesterValidationSchema),
+router.patch('/:semesterId',
+validateRequest(AcademicSemesterValidation.updateAcademicSemesterValidationSchema),
 AcademicSemesterControllers.updateAcademicSemester)
 
 export const AcademicSemesterRoutes = router;

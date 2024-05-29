@@ -34,13 +34,20 @@ const getSingleAcademicSemesterFromDB = async(semesterId: string)=>{
 
 
 // Update Data 
-const updateAcademicSemesterInDB = async(semesterId: string ,updateData: TAcademicSemester)=>{
-  if(academicSemesterCodeMapper[updateData.name] !== updateData.code){
+const updateAcademicSemesterInDB = async(semesterId: string ,updateData: Partial<TAcademicSemester>)=>{
+  if(
+    updateData.name &&
+    updateData.code &&
+    academicSemesterCodeMapper[updateData.name] !== updateData.code){
     throw new Error('Invalid semester code')
   }
   
   
-  const result = await AcademicSemester.findByIdAndUpdate(semesterId,{$set: updateData},{new:true});
+  const result = await AcademicSemester.findOneAndUpdate(
+    {_id: semesterId},
+    {$set: updateData},
+    {new:true}
+  );
 
   
   return result;
