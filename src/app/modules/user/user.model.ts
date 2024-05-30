@@ -7,6 +7,7 @@ const userSchema = new Schema<Tuser>({
     id:{
         type: String,
         require:true,
+        unique:true,
     },
     password:{
         type: String,
