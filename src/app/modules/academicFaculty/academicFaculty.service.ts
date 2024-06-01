@@ -34,7 +34,7 @@ const updateAcademicFacultyInDB = async(id: string,updateData: Partial<TAcademic
 }
 
 
-export const  AcademicSevices = {
+export const  AcademicFacultySevices = {
     createAcademicFacultyInDB,
     getAllAcademicFacultyFromDB,
     getSingleAcademicFacultyFromDB,
