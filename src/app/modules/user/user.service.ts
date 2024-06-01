@@ -6,9 +6,18 @@ import { Student } from './../student/student.model';
 
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
 import { genarateStudentId } from "./user.utils";
+import AppError from './../../errors/AppError';
+import httpStatus  from 'http-status';
 
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
+
+
+  const isStudentExits = await Student.findOne({ email: payload.email });
+  if (isStudentExits) {
+    throw new AppError(httpStatus.NOT_FOUND ,'Student already exists');
+  }
+
 //create a user object
   const userData: Partial<Tuser> = {}
 

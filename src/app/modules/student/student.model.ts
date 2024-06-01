@@ -1,6 +1,8 @@
 import { Schema, model } from 'mongoose';
+
 import {
-  Guardian,
+
+ Guardian,
   LocalGuardian,
   StudentModel,
   TStudent,
@@ -69,7 +71,8 @@ const localGuradianSchema = new Schema<LocalGuardian>({
 
 const studentSchema = new Schema<TStudent>(
   {
-    id: { type: String },
+    id: { type: String,required: [true, 'ID is required'],
+    unique: true, },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -80,7 +83,7 @@ const studentSchema = new Schema<TStudent>(
     name: userNameSchema,
     gender: ['male', 'female'],
     dateOfBirth: { type: String },
-    email: { type: String, required: true },
+    email: { type: String, required: true ,unique: true,},
     contactNo: { type: String, required: true },
     emergencyContactNo: { type: String, required: true },
     bloogGroup: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
@@ -94,6 +97,11 @@ const studentSchema = new Schema<TStudent>(
       ref:"AcademicSemester",
     },
     isDeleted: { type: Boolean, default: false },
+    academicDepartment:{
+      type: Schema.Types.ObjectId,
+      ref:"AcademicDepartment",
+    },
+   
   },
   {
     toJSON: { virtuals: true },
