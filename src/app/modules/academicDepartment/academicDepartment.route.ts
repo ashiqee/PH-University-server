@@ -12,7 +12,7 @@ const router = express.Router();
 
 
 router.post('/create-department',
-validateRequest(AcademicDepartmentValidation.createAcademicDepartmentValidtionSchema),
+// validateRequest(AcademicDepartmentValidation.createAcademicDepartmentValidtionSchema),
 AcademicDepartmentControllers.createAcademicDepartment)
 
 router.get('/',AcademicDepartmentControllers.getAllAcademicDepartment);
