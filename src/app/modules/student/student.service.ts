@@ -19,13 +19,6 @@ const studentSearchableField =  ['email','name.firstName','presentAdress']
     searchTerm = query?.searchTerm as string;
   }
 
-  // filtering 
-
-  const  excludeFields = ['searchTerm']
-  excludeFields.forEach((el)=> delete queryObj[el]);
-
-  
-
 
 
 
@@ -34,6 +27,17 @@ const searchQuery = Student.find({
       [field]:{$regex: searchTerm, $options: 'i'}
     }))
   })
+
+
+  // filtering 
+
+  const  excludeFields = ['searchTerm','sort']
+  excludeFields.forEach((el)=> delete queryObj[el]);
+
+  
+
+
+
   const filterQuery = searchQuery.find(queryObj).populate('admissionSemester').populate(
     {
       path:'academicDepartment',
@@ -47,6 +51,8 @@ const searchQuery = Student.find({
     sort = query.sort as string;
   }
 
+ 
+  
   const sortQuery = await filterQuery.sort(sort);
   return sortQuery;
 
