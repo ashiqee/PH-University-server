@@ -56,14 +56,16 @@ const searchQuery = Student.find({
   const sortQuery =  filterQuery.sort(sort);
 let page =1;
   let limit = 1;
-let skip =0
+let skip =0;
 
 if(query.limit){
   limit = Number(query.limit)
 }
   if(query.page){
     page =Number(query.page)
+    skip = (page-1)*limit
   }
+  
   const paginateQuery = sortQuery.skip(skip)
   
 
