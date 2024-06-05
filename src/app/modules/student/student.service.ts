@@ -31,7 +31,7 @@ const searchQuery = Student.find({
 
   // filtering 
 
-  const  excludeFields = ['searchTerm','sort','limit']
+  const  excludeFields = ['searchTerm','sort','limit','page']
   excludeFields.forEach((el)=> delete queryObj[el]);
 
   
@@ -54,13 +54,20 @@ const searchQuery = Student.find({
  
    
   const sortQuery =  filterQuery.sort(sort);
-
+let page =1;
   let limit = 1;
-  if(query.limit){
-    limit = query.limit
-  }
+let skip =0
 
-  const limitQeury = await sortQuery.limit(limit)
+if(query.limit){
+  limit = Number(query.limit)
+}
+  if(query.page){
+    page =Number(query.page)
+  }
+  const paginateQuery = sortQuery.skip(skip)
+  
+
+  const limitQeury = await paginateQuery.limit(limit)
   return limitQeury;
 
 };
