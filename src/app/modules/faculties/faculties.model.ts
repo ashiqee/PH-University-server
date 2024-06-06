@@ -1,6 +1,20 @@
 import { Schema, model } from "mongoose";
-import { TFaculties } from "./faculties.interface";
+import { TFaculties, TUserName } from "./faculties.interface";
 
+
+const userNameSchema = new Schema<TUserName>({
+    firstName: {
+      type: String,
+      required: true,
+    },
+    middleName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+  });
 
 
 const facultiesSchema =  new Schema<TFaculties>(
@@ -8,14 +22,18 @@ const facultiesSchema =  new Schema<TFaculties>(
         id: { type: String,
         required: [true, 'ID is required'],
         unique: true },
-        designation: {
+       
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: [true, 'user id is required'],
+            unique: true,
+          },
+        
+          name: userNameSchema,
+          designation: {
             type: String,
             require: [true, 'Designation is required'],
-        },
-        name:{
-            type: String,
-            require: [true, 'Name is required'],
-           
         },
         gender: {
             gender: ['male', 'female'],

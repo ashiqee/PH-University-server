@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 
 export const facultySchema = z.object({
+    body: z.object({
     id: z.string().uuid("Invalid ID format, expected UUID"),
     name: z.string().min(1, "Name is required").max(100, "Name should not exceed 100 characters"),
     designation: z.string().min(1, "Designation is required").max(100, "Designation should not exceed 100 characters"),
@@ -17,5 +18,5 @@ export const facultySchema = z.object({
     profileImage: z.string().url("Invalid URL format for profile image"),
     academicFaculty: z.string(),
     academicDepartment: z.string(),
-  
+    })
 });

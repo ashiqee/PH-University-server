@@ -1,9 +1,19 @@
 
 import { Types } from 'mongoose';
 
+
+
+
+export type TUserName ={
+    firstName: string;
+  middleName: string;
+  lastName: string;
+}
+
 export type TFaculties={
     id: string,
-    name: string,
+    user: Types.ObjectId,
+    name: TUserName,
     designation: string,
     gender:string,
     dateOfBirth: string,
