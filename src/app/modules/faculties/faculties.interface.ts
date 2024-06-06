@@ -2,7 +2,7 @@
 import { Types } from 'mongoose';
 
 
-
+export type TGender = 'male' | 'female';
 
 export type TUserName ={
     firstName: string;

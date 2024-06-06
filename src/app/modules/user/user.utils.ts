@@ -74,3 +74,18 @@ return lastStudent?.id ? lastStudent.id : undefined
 
   return lastFaculties?.id ? lastFaculties.id : undefined
   }
+
+  export const genaratedFacultiesId = async ()=>{
+
+    let currentId = (0).toString();
+
+    const lastFacultiesId = await findLastFacultiesId()
+ if(lastFacultiesId){
+  currentId = lastFacultiesId.substring(2)
+ }
+ let incrementId = (Number(currentId)+1).toString().padStart(4,'0')
+
+ incrementId =`F-${incrementId}`;
+
+ return incrementId;
+  }

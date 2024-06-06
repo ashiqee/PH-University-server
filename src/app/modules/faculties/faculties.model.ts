@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { TFaculties, TUserName } from "./faculties.interface";
+import { Gender } from "./faculties.constant";
 
 
 const userNameSchema = new Schema<TUserName>({
@@ -36,8 +37,11 @@ const facultiesSchema =  new Schema<TFaculties>(
             require: [true, 'Designation is required'],
         },
         gender: {
-            gender: ['male', 'female'],
-            require: [true,'gender is required']
+            type: String,
+            enum: {
+              values: Gender,
+              message: '{VALUE} is not a valid gender',
+            },
         },
         dateOfBirth: {
             type: String,

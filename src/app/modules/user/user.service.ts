@@ -5,7 +5,7 @@ import { UserModel } from './user.model';
 import { Student } from './../student/student.model';
 
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { genarateStudentId } from './user.utils';
+import { genarateStudentId, genaratedFacultiesId } from './user.utils';
 import AppError from './../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
@@ -91,10 +91,30 @@ try{
   session.startTransaction();
 
   //genarated ID
-  userData.id = await 
+  userData.id = await genaratedFacultiesId()
+
+  const newUser = await UserModel.create([userData],{session});
+
+  if(!newUser.length)throw new AppError(httpStatus.BAD_REQUEST,'Failed to create user');
+
+  // set id , _id as user
+  playload.id = newUser[0].id;
+  playload.user = newUser[0]._id;
+
+  //create a faculty (transcation-2)
+  const newFaculties = await Faculties.create([playload],[session]);
+
+  if(!newFaculties)throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
+
+  await session.commitTransaction();
+  await session.endSession();
+  return newFaculties;
+
 
 }catch(err){
-
+  await session.abortTransaction();
+  await session.endSession();
+  throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
 }
 
 
@@ -103,4 +123,5 @@ try{
 
 export const UserServices = {
   createStudentIntoDB,
+  createFacultiesInToDB
 };
