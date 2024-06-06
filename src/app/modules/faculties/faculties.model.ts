@@ -82,7 +82,13 @@ const facultiesSchema =  new Schema<TFaculties>(
     },{
         timestamps:true
     }
-)
+);
+
+//virtual name
+
+facultiesSchema.virtual('fullName').get(function(){
+    return `${this?.name?.firstName}  ${this?.name?.middleName}  ${this?.name?.lastName}`;
+})
 
 
 export const Faculties = model<TFaculties>('Faculties', facultiesSchema)

@@ -55,3 +55,22 @@ return lastStudent?.id ? lastStudent.id : undefined
 
     return incrementId;
   } 
+
+
+  //faculties 
+
+  const findLastFacultiesId = async ()=>{
+    const lastFaculties = await UserModel.findOne({
+      role:"faculty",
+    },
+  {
+    id:1,
+    _id:0,
+  },)
+  .sort({
+    createdAt: -1,
+  })
+  .lean()
+
+  return lastFaculties?.id ? lastFaculties.id : undefined
+  }
