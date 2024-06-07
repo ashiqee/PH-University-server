@@ -5,6 +5,7 @@ import { Course } from "./course.model"
 
 
 const createCourseIntoDB = async (payload:TCourse)=>{
+console.log(payload);
 
     const result = await Course.create(payload);
     return result;
@@ -12,7 +13,7 @@ const createCourseIntoDB = async (payload:TCourse)=>{
 const getAllCourseFromDB = async (query:Record<string,unknown> )=>{
     const courseQuery = new QueryBuilder(
         Course.find()
-        .populate('academicDepartment academicFaculty'),
+        .populate('preRequisiteCourses.course'),
         query,
     ).search(CourseSearchableFields)
     .filter()

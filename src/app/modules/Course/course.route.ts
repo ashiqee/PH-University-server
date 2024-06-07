@@ -16,4 +16,4 @@ router.get('/:id', CourseControllers.getSingleCourse);
 router.patch('/:id', validateRequest(CourseValidations.createCourseValidationSchema), CourseControllers.updateACourse)
 
 
-export const FacultiesRoutes =router;
+export const CourseRoutes =router;
