@@ -10,7 +10,8 @@ import AppError from './../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { TFaculties } from '../faculties/faculties.interface';
-import { Faculties } from '../faculties/faculties.model';
+import { Faculties } from './../faculties/faculties.model';
+
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   const isStudentExits = await Student.findOne({ email: payload.email });
@@ -52,11 +53,15 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id; // reference to user
 
+    
     //create a student (transcation-2)
     const newStudent = await Student.create([payload], [session]);
 
-    if (!newStudent)
+
+    if (!newStudent){
+
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+    }
 
     await session.commitTransaction();
     await session.endSession();
@@ -72,8 +77,8 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
 
 //create faculties
 
-const createFacultiesInToDB = async (password: string, playload: TFaculties)=>{
-  const isFacultiesExits = await Faculties.findOne({email: playload.email});
+const createFacultiesInToDB = async (password: string, payload: TFaculties)=>{
+  const isFacultiesExits = await Faculties.findOne({email: payload.email});
   if(isFacultiesExits)throw new AppError(httpStatus.NOT_FOUND,'Faculties already exits');
 
 
@@ -94,17 +99,23 @@ try{
   userData.id = await genaratedFacultiesId()
 
   const newUser = await UserModel.create([userData],{session});
+ 
 
   if(!newUser.length)throw new AppError(httpStatus.BAD_REQUEST,'Failed to create user');
 
   // set id , _id as user
-  playload.id = newUser[0].id;
-  playload.user = newUser[0]._id;
+  payload.id = newUser[0].id;
+  payload.user = newUser[0]._id;
 
+ 
+  console.log(payload);
+  
   //create a faculty (transcation-2)
-  const newFaculties = await Faculties.create([playload],[session]);
+  const newFaculties = await Faculties.create([payload],[session]);
 
-  if(!newFaculties)throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
+  console.log('new faculty',newFaculties);
+  
+  if(!newFaculties){throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');}
 
   await session.commitTransaction();
   await session.endSession();
@@ -114,7 +125,7 @@ try{
 }catch(err){
   await session.abortTransaction();
   await session.endSession();
-  throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+  throw new AppError(httpStatus.BAD_REQUEST,err, 'Failed to create user op');
 }
 
 

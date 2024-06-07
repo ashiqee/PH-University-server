@@ -19,8 +19,11 @@ const createStudent = catchAsync(async (req, res) => {
 const createFaculties = catchAsync(async (req, res) => {
   const { password, faculty: facultyData } = req.body;
   // const parsedUser = UserValidation.parse(facultyData)
+ 
+  
 
   const result = await UserServices.createFacultiesInToDB(password, facultyData);
+console.log(result);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

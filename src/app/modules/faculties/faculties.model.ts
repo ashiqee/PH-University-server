@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { TFaculties, TUserName } from "./faculties.interface";
+import { FacultiesModel, TFaculties, TUserName } from "./faculties.interface";
 import { Gender } from "./faculties.constant";
 
 
@@ -73,19 +73,21 @@ const facultiesSchema =  new Schema<TFaculties>(
         },
         academicFaculty: {
             type: Schema.Types.ObjectId,
-            require: [true,'academicFaculty is required']
+           ref:"AcademicFaculty"
         },
         academicDepartment: {
             type: Schema.Types.ObjectId,
-            require: [true,'academicDepartment is required']
+            ref:"AcademicDepartment"
         },
         isDeleted: {
             type: Boolean,
             default:false,
         },
     },{
-        timestamps:true
-    }
+toJSON: {virtuals:true},
+timestamps:true
+    },
+   
 );
 
 //virtual name
@@ -95,4 +97,4 @@ facultiesSchema.virtual('fullName').get(function(){
 })
 
 
-export const Faculties = model<TFaculties>('Faculties', facultiesSchema)
+export const Faculties = model<TFaculties,FacultiesModel>('Faculties', facultiesSchema)

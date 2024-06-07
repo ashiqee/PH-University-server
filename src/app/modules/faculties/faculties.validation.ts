@@ -3,7 +3,7 @@ import { z } from 'zod';
 // Define UserName schema
 const UserNameSchema = z.object({
     firstName: z.string().nonempty({ message: "First name is required" }),
-    middleName: z.string().nonempty({ message: "Middle name is required" }),
+    middleName: z.string().optional(),
     lastName: z.string().nonempty({ message: "Last name is required" }),
   });
 const createfacultyValidation = z.object({
@@ -15,7 +15,7 @@ const createfacultyValidation = z.object({
         .string()
         .min(1, 'Designation is required')
         .max(100, 'Designation should not exceed 100 characters'),
-      gender: z.enum(['Male', 'Female'], {
+      gender: z.enum(['male', 'female'], {
         errorMap: () => ({ message: "Gender must be 'male' or 'female'" }),
       }),
       dateOfBirth: z
