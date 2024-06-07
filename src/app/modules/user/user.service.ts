@@ -5,12 +5,14 @@ import { UserModel } from './user.model';
 import { Student } from './../student/student.model';
 
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { genarateStudentId, genaratedFacultiesId } from './user.utils';
+import { genarateStudentId, genaratedAdminId, genaratedFacultiesId } from './user.utils';
 import AppError from './../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { TFaculties } from '../faculties/faculties.interface';
 import { Faculties } from './../faculties/faculties.model';
+import { TAdmin } from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
 
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
@@ -113,7 +115,7 @@ try{
   //create a faculty (transcation-2)
   const newFaculties = await Faculties.create([payload],[session]);
 
-  console.log('new faculty',newFaculties);
+
   
   if(!newFaculties){throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');}
 
@@ -125,7 +127,61 @@ try{
 }catch(err){
   await session.abortTransaction();
   await session.endSession();
-  throw new AppError(httpStatus.BAD_REQUEST,err, 'Failed to create user op');
+  throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user op');
+}
+
+
+}
+//create Admin user
+
+const createAdminInToDB = async (password: string, payload: TAdmin)=>{
+  // const isAdminExits = await Admin.findOne({email: payload.email});
+  // if(isAdminExits)throw new AppError(httpStatus.NOT_FOUND,'Admin already exits');
+
+
+  //create a user object
+  const userData: Partial<Tuser> ={};
+
+//if password not given use default password
+userData.password = password || (config.defalt_password as string);
+
+userData.role = 'admin';
+
+const session = await mongoose.startSession();
+
+try{
+  session.startTransaction();
+
+  //genarated ID
+  userData.id = await genaratedAdminId()
+
+  const newUser = await UserModel.create([userData],{session});
+ 
+
+  if(!newUser.length)throw new AppError(httpStatus.BAD_REQUEST,'Failed to create user');
+
+  // set id , _id as user
+  payload.id = newUser[0].id;
+  payload.user = newUser[0]._id;
+
+ 
+  
+  //create a admin (transcation-2)
+  const newAdmin = await Admin.create([payload],[session]);
+
+
+  
+  if(!newAdmin){throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin');}
+
+  await session.commitTransaction();
+  await session.endSession();
+  return newAdmin;
+
+
+}catch(err){
+  await session.abortTransaction();
+  await session.endSession();
+  throw new AppError(httpStatus.BAD_REQUEST, `Failed to create user ${err}`);
 }
 
 
@@ -134,5 +190,6 @@ try{
 
 export const UserServices = {
   createStudentIntoDB,
-  createFacultiesInToDB
+  createFacultiesInToDB,
+  createAdminInToDB
 };

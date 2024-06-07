@@ -89,3 +89,39 @@ return lastStudent?.id ? lastStudent.id : undefined
 
  return incrementId;
   }
+
+
+  
+  //admin section 
+
+  const findLastAdminId = async ()=>{
+    const lastAdmin = await UserModel.findOne({
+      role:"admin",
+    },
+  {
+    id:1,
+    _id:0,
+  },)
+  .sort({
+    createdAt: -1,
+  })
+  .lean()
+
+  return lastAdmin?.id ? lastAdmin.id : undefined
+  }
+
+
+  export const genaratedAdminId = async ()=>{
+
+    let currentId = (0).toString();
+
+    const lastFacultiesId = await findLastAdminId()
+ if(lastFacultiesId){
+  currentId = lastFacultiesId.substring(2)
+ }
+ let incrementId = (Number(currentId)+1).toString().padStart(4,'0')
+
+ incrementId =`A-${incrementId}`;
+
+ return incrementId;
+  }

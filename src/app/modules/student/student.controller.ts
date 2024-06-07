@@ -54,7 +54,7 @@ const updateAStudent = catchAsync(
           message: "Student info updated successfully",
           data: result,
       })
-  }
+  } 
 )
 
 export const StudentControllers = {
