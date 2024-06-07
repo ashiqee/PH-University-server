@@ -11,7 +11,7 @@ router.delete('/:facultyId',FacultiesControllers.deleteFaculties)
 
 router.get('/:facultyId', FacultiesControllers.getSingleFaculties);
 
-router.patch('/:facultyId', validateRequest(facultyValidations.createfacultyValidation), FacultiesControllers.updateAFaculties)
+router.patch('/:facultyId', validateRequest(facultyValidations.updateCreatefacultyValidation), FacultiesControllers.updateAFaculties)
 
 
 export const FacultiesRoutes =router;

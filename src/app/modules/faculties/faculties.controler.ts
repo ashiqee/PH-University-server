@@ -25,12 +25,13 @@ const getSingleFaculties = catchAsync(async (req, res) => {
     });
   });
 const updateAFaculties = catchAsync(async (req, res) => {
-  
-    const result = await FacultiesServices.updateAFacultiesInDB(req.query);
+  const {facultyId} = req.params;
+  const {faculty} = req.body;
+    const result = await FacultiesServices.updateAFacultiesInDB(facultyId,faculty);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Faculty are retrieved succesfully',
+      message: 'Faculty are updated succesfully',
       data: result,
     });
   });
