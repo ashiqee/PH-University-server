@@ -96,5 +96,26 @@ facultiesSchema.virtual('fullName').get(function(){
     return `${this?.name?.firstName}  ${this?.name?.middleName}  ${this?.name?.lastName}`;
 })
 
+//filter out deleted documents 
+facultiesSchema.pre('find',function(next){
+    this.find({isDeleted:{$ne:true}});
+    next()
+})
+facultiesSchema.pre('findOne',function(next){
+    this.findOne({isDeleted:{$ne:true}});
+    next()
+})
+
+
+facultiesSchema.pre('aggregate',function(next){
+    this.pipeline().unshift({$match:{isDeleted: {$ne:true}}})
+    next()
+})
+
+facultiesSchema.statics.isUserExists= async function (id:string) {
+    const existingUser = await Faculties.findOne({id});
+    return existingUser;
+    
+}
 
 export const Faculties = model<TFaculties,FacultiesModel>('Faculties', facultiesSchema)
