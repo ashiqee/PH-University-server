@@ -37,7 +37,12 @@ const updateAFacultiesInDB =async(id:string,payload: Partial<TFaculties>)=>{
  return result;
 
 }
-const deleteFacultiesFromDB =()=>{
+const deleteFacultiesFromDB =async(id:string)=>{
+
+
+    const result = await Faculties.findOneAndUpdate({id},{isDeleted:true},{new:true})
+
+    return result;
 
 }
 

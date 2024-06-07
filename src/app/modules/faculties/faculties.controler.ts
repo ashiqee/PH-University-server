@@ -20,7 +20,7 @@ const getSingleFaculties = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Faculty are retrieved succesfully',
+      message: 'Faculty is retrieved succesfully',
       data: result,
     });
   });
@@ -36,12 +36,12 @@ const updateAFaculties = catchAsync(async (req, res) => {
     });
   });
 const deleteFaculties = catchAsync(async (req, res) => {
-  
-    const result = await FacultiesServices.deleteFacultiesFromDB(req.query);
+    const {facultyId} = req.params;
+    const result = await FacultiesServices.deleteFacultiesFromDB(facultyId);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Faculty are retrieved succesfully',
+      message: 'Faculty is deleted succesfully',
       data: result,
     });
   });
