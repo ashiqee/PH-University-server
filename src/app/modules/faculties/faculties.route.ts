@@ -7,11 +7,11 @@ import validateRequest from '../../middlewares/validateRequests';
 const router = express.Router();
 router.get('/', FacultiesControllers.getAllFaculties);
 
-router.delete('/:facultyId',FacultiesControllers.deleteFaculties)
+router.delete('/:id',FacultiesControllers.deleteFaculties)
 
-router.get('/:facultyId', FacultiesControllers.getSingleFaculties);
+router.get('/:id', FacultiesControllers.getSingleFaculties);
 
-router.patch('/:facultyId', validateRequest(facultyValidations.updateCreatefacultyValidation), FacultiesControllers.updateAFaculties)
+router.patch('/:id', validateRequest(facultyValidations.updateCreatefacultyValidation), FacultiesControllers.updateAFaculties)
 
 
 export const FacultiesRoutes =router;

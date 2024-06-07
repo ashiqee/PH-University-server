@@ -1,5 +1,9 @@
+import mongoose from "mongoose"
 import { TAdmin } from "./admin.interface"
 import { Admin } from "./admin.model"
+import AppError from "../../errors/AppError"
+import httpStatus from "http-status"
+import { UserModel } from "../user/user.model"
 
 
 
@@ -40,10 +44,41 @@ const updateAAdminInDB =async(id:string,payload: Partial<TAdmin>)=>{
 }
 const deleteAdminFromDB =async(id:string)=>{
 
+const session = await mongoose.startSession()
+try{
+    session.startTransaction();
 
-    const result = await Admin.findOneAndUpdate({id},{isDeleted:true},{new:true})
+    const deletedAdmin = await Admin.findOneAndUpdate(
+        {id},
+        {isDeleted:true},
+        {new:true, session},
+    );
+    if(!deletedAdmin){
+        throw new AppError(httpStatus.BAD_REQUEST,"failed to deleted admin")
 
-    return result;
+    }
+
+    const userId = deletedAdmin.user;
+    const deletedUser = await UserModel.findOneAndUpdate(
+        { userId },
+        { isDeleted: true },
+        { new: true, session },
+      );
+  
+      if (!deletedUser)
+        throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user');
+  
+      await session.commitTransaction();
+      await session.endSession();
+  
+      return deletedAdmin;
+    } catch (err) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user');
+    }
+
+  
 
 }
 

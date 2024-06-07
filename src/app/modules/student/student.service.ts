@@ -77,12 +77,12 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({ id });
+  const result = await Student.findById(id);
   return result;
 };
 
 const deleteStudentFromDB = async (id: string) => {
-  const isUserExists = await UserModel.findOne({ id: id });
+  const isUserExists = await UserModel.findById(id);
 
   if (!isUserExists) {
     throw new AppError(httpStatus.BAD_REQUEST, 'User does not exist');
@@ -92,8 +92,8 @@ const deleteStudentFromDB = async (id: string) => {
   try {
     session.startTransaction();
 
-    const deletedStudent = await Student.findOneAndUpdate(
-      { id },
+    const deletedStudent = await Student.findByIdAndUpdate(
+      id ,
       { isDeleted: true },
       { new: true, session },
     );
@@ -101,8 +101,11 @@ const deleteStudentFromDB = async (id: string) => {
     if (!deletedStudent)
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
 
-    const deletedUser = await UserModel.findOneAndUpdate(
-      { id },
+
+    //get user id
+    const userId = deletedStudent.user;
+    const deletedUser = await UserModel.findByIdAndUpdate(
+      userId,
       { isDeleted: true },
       { new: true, session },
     );
@@ -148,7 +151,7 @@ const updateAStudentInDB = async (id: string, payload: Partial<TStudent>) => {
 
  
 
-  const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
+  const result = await Student.findByIdAndUpdate( id , modifiedUpdatedData, {
     new: true,
     runValidators: true,
   });
