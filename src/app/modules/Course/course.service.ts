@@ -1,16 +1,30 @@
+import QueryBuilder from "../../builder/QueryBuilder";
+import { CourseSearchableFields } from "./course.constant";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model"
 
 
-const createCourseIntoDB = async ()=>{
+const createCourseIntoDB = async (payload:TCourse)=>{
 
-    const result = await Course.create();
+    const result = await Course.create(payload);
     return result;
 }
-const getAllCourseFromDB = async ()=>{
-
-    const result = await Course.find();
-    return result;
+const getAllCourseFromDB = async (query:Record<string,unknown> )=>{
+    const courseQuery = new QueryBuilder(
+        Course.find()
+        .populate('academicDepartment academicFaculty'),
+        query,
+    ).search(CourseSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
+    const result = await courseQuery.modelQuery;
+    // const meta = await facultiesQuery.countTotal();
+    return {
+    //   meta,
+      result,
+    };
 }
 const getSingleCourseFromDB = async (id:string)=>{
 
