@@ -37,7 +37,8 @@ const getSingleCourse = catchAsync(async (req, res) => {
   });
 const updateACourse = catchAsync(async (req, res) => {
   const {id} = req.params;
-  const {course} = req.body;
+  const course = req.body;
+
     const result = await CourseServices.updateCourseIntoDB(id,course);
     sendResponse(res, {
       statusCode: httpStatus.OK,
