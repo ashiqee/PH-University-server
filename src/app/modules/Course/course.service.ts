@@ -2,8 +2,8 @@ import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { CourseSearchableFields } from './course.constant';
-import { TCourse } from './course.interface';
-import { Course } from './course.model';
+import { TCourse, TCourseFaculty } from './course.interface';
+import { Course, CourseFaculty } from './course.model';
 import mongoose from 'mongoose';
 
 const createCourseIntoDB = async (payload: TCourse) => {
@@ -44,37 +44,35 @@ const deleteSingleCourseFromDB = async (id: string) => {
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { preRequisiteCourses, ...courseRemainingData } = payload;
 
+  const session = await mongoose.startSession();
 
-  const session = await mongoose.startSession()
-
-try{
-    session.startTransaction()
-
+  try {
+    session.startTransaction();
 
     //step one ; basic course info update
-  
+
     const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
       id,
       courseRemainingData,
       {
         new: true,
         runValidators: true,
-        session
+        session,
       },
     );
-  
-    if(!updatedBasicCourseInfo) {
+
+    if (!updatedBasicCourseInfo) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
     }
-  
+
     //check if there is any pre requisite courses to update
-  
+
     if (preRequisiteCourses && preRequisiteCourses.length > 0) {
       //filter out the deleted fields
       const deletedPreRequisites = preRequisiteCourses
         .filter((el) => el.course && el.isDeleted)
         .map((el) => el.course);
-  
+
       const deletedPreRequisitesCourses = await Course.findByIdAndUpdate(
         id,
         {
@@ -82,47 +80,59 @@ try{
             preRequisiteCourses: { course: { $in: deletedPreRequisites } },
           },
         },
-        { new: true, 
-          runValidators: true,
-          session },
+        { new: true, runValidators: true, session },
       );
       if (!deletedPreRequisitesCourses) {
         throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
       }
-  
+
       //filter out the new course fields
       const newPreRequisites = preRequisiteCourses?.filter(
         (el) => el.course && !el.isDeleted,
       );
-  
-      const newPreRequisiteCourses = await Course.findByIdAndUpdate(id, 
-          {
-        $addToSet: { preRequisiteCourses: { $each: newPreRequisites } },
-      },
-      { new: true, 
-          runValidators: true,
-          session }
-  );
-  
+
+      const newPreRequisiteCourses = await Course.findByIdAndUpdate(
+        id,
+        {
+          $addToSet: { preRequisiteCourses: { $each: newPreRequisites } },
+        },
+        { new: true, runValidators: true, session },
+      );
+
       if (!newPreRequisiteCourses) {
-          throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
-        }
-    const result = await Course.findById(id).populate('preRequisiteCourses.course');
-return result;
+        throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
       }
-  
-  
-      session.commitTransaction()
-      session.endSession()
-  
-}catch(err){
-    session.abortTransaction()
-    session.endSession()
+      const result = await Course.findById(id).populate(
+        'preRequisiteCourses.course',
+      );
+      return result;
+    }
+
+    session.commitTransaction();
+    session.endSession();
+  } catch (err) {
+    session.abortTransaction();
+    session.endSession();
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update course');
-      
-}
-  
-  };
+  }
+};
+
+// assign faculties
+
+const assignFacultiesWithCourseInToDB = async (
+  id: string,
+  payload: Partial<TCourseFaculty>,
+) => {
+  const result = await CourseFaculty.findByIdAndUpdate(
+    id,
+    { 
+        course: id,
+        $addToSet: { faculties: { $each: payload } } },
+    { upsert: true, new: true },
+  );
+
+  return result;
+};
 
 export const CourseServices = {
   createCourseIntoDB,
@@ -130,4 +140,5 @@ export const CourseServices = {
   getSingleCourseFromDB,
   deleteSingleCourseFromDB,
   updateCourseIntoDB,
+  assignFacultiesWithCourseInToDB,
 };
