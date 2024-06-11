@@ -10,16 +10,16 @@ const createSemesterRegistrationInDB = async (payload: TSemesterRegistration)=>{
    
     const academicSemester = payload?.academicSemester;
 
-    const isAcademicSemester = await AcademicSemester.findById(academicSemester);
+    const isAcademicSemesterExits = await AcademicSemester.findById(academicSemester);
 
-    if(!isAcademicSemester){
+    if(!isAcademicSemesterExits){
         throw new AppError(httpStatus.NOT_FOUND,"This Academic semester not found")
     }
 
 //check if the semester is already registerd
-    const isAcademicRegisterSemester = await SemesterRegistration.findById(academicSemester);
+    const isAcademicRegisterSemesterExits = await SemesterRegistration.findOne({academicSemester});
     
-        if(!isAcademicRegisterSemester){
+        if(isAcademicRegisterSemesterExits){
             throw new AppError(httpStatus.NOT_FOUND,"This Semester already registered")
         }
    
@@ -30,7 +30,7 @@ const createSemesterRegistrationInDB = async (payload: TSemesterRegistration)=>{
 
 const getAllSemesterRegistrationFromDB = async ()=>{
 
-const result = await SemesterRegistration.find()
+const result = await SemesterRegistration.find().populate('academicSemester');
 return result;
 }
 
