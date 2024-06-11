@@ -10,7 +10,7 @@ import { SemesterRegistrationControllers } from './semesterRegistration.controll
 const router = express.Router();
 
 
-router.post('/create-semester-registration',
+router.post('/',
 validateRequest(SemesterRegistrationValidation.createSemesterRegistrationValidtionSchema),
 SemesterRegistrationControllers.createSemesterRegistration)
 
